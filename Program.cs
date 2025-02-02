@@ -14,6 +14,7 @@ class ListenServer
   public static string ConfigDir { get; private set; } = "";
   public static string IncludesDir { get; private set; } = "";
   public static IEvaluator ScriptRunner = CSScript.Evaluator.ReferenceAssembly(typeof(ListenServer).Assembly);
+  public static bool SafeMode { get; private set; } = false;
 
   static void Main()
   {
@@ -32,7 +33,8 @@ class ListenServer
     Utilities.EnsureDirectory(IncludesDir);
 
     Logger.LogInfo("Startup", [
-      ("BaseDir", BaseDir)
+      ("BaseDir", BaseDir),
+      ("SafeMode", SafeMode),
     ]);
 
     // Define the local endpoint for the socket.

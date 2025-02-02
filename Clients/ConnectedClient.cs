@@ -116,6 +116,12 @@ public class ConnectedClient
 
     FileInfo file = new(resolvedPath);
 
+    if (ListenServer.SafeMode)
+    {
+      Logger.LogTrace("Serving safe mode document");
+      return (200u, "OK", Encoding.UTF8.GetBytes($"<h2>File Served!</h2><p>Request: {file.FullName.Replace(ListenServer.BaseDir, string.Empty)}</p>"), "Text/HTML");
+    }
+
     if (!file.Exists)
     {
       return (404u, "Not Found", Encoding.UTF8.GetBytes("<h2>404: File Not Found</h2><p>Resource not found</p>"), "text/html");
