@@ -1,4 +1,4 @@
-﻿using System.Net;
+using System.Net;
 using System.Net.Sockets;
 using CSScriptLib;
 using SharpWebserver.Clients;
@@ -15,6 +15,7 @@ class ListenServer
   public static string IncludesDir { get; private set; } = "";
   public static IEvaluator ScriptRunner = CSScript.Evaluator.ReferenceAssembly(typeof(ListenServer).Assembly);
   public static bool SafeMode { get; private set; } = false;
+  public static string Version { get; private set; } = string.Empty;
 
   static void Main()
   {
@@ -22,10 +23,19 @@ class ListenServer
     List<ConnectedClient> clients = [];
     List<ConnectedClient> reapedClients = [];
 
+    var ver = typeof(ListenServer).Assembly.GetName().Version;
+
+    if (ver is null)
+    {
+      Logger.LogError("Somehow booted up without a version!");
+      return;
+    }
+
     BaseDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "RobynLlama", "SimpleServer");
     WebRoot = Path.Combine(BaseDir, "www");
     ConfigDir = Path.Combine(BaseDir, "config");
     IncludesDir = Path.Combine(BaseDir, "includes");
+    Version = $"v{ver.Major}.{ver.Minor}";
 
     Utilities.EnsureDirectory(BaseDir);
     Utilities.EnsureDirectory(WebRoot);
@@ -34,6 +44,7 @@ class ListenServer
 
     Logger.LogInfo("Startup", [
       ("BaseDir", BaseDir),
+      ("Version", Version),
       ("SafeMode", SafeMode),
     ]);
 
