@@ -1,11 +1,10 @@
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using SharpWebserver.Interop;
 using System.IO;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using SharpWebserver.Caching;
 
 namespace SharpWebserver.Clients;
 
@@ -133,26 +132,21 @@ public class ConnectedClient
 
     if (name.EndsWith(".cs"))
     {
-      string script;
+      var script = PageCache.FetchPage(file);
+
+      if (script is null)
+        return (500u, "Server Error", Encoding.UTF8.GetBytes("The requested resource failed to build"), "text/html");
 
       try
       {
-        using (var textReader = file.OpenText())
-          script = textReader.ReadToEnd();
-
-        var builder = ListenServer.ScriptRunner.LoadCode<IScriptPage>(script);
-
-        if (script is null)
-          return (500u, "Server Error", Encoding.UTF8.GetBytes("The requested resource failed to compile for an unspecified reason"), "text/html");
-
-        var data = builder.CreatePage(this, arguments);
+        var data = script.CreatePage(this, arguments);
         return (200u, "OK", data, contentType);
       }
       catch (Exception ex)
       {
-        Console.WriteLine($"Exception: {ex.Message}");
-        return (500u, "Server Error", Encoding.UTF8.GetBytes($"<html><p>The server encountered an error while compiling the requested resource:</p><h3>{ex.GetType().Name}</h3> <p>Message: <pre>{ex.Message.Replace("<script>", string.Empty)}</pre></p><p>Strace: <pre>{ex.StackTrace}</pre></p></html>"), "text/html");
+        return (500u, "Server Error", Encoding.UTF8.GetBytes($"The requested resource encountered an exception while running {ex.ToString().Replace("<", "&gt;")}"), "text/html");
       }
+
     }
     else
     {
