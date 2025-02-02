@@ -69,6 +69,7 @@ public class ConnectedClient
 
       Logger.LogInfo($"Responding to a request", [
         ("Request", info.Request),
+        ("Client-Remote", Remote),
         ("Content-Type", contentType),
         ("Status", code),
         ("Reason", reason),
