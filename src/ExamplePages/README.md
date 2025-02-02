@@ -1,5 +1,9 @@
 # Examples
 
+![Static Badge](https://img.shields.io/badge/Language-C%23-blue?style=flat-square&logo=sharp)
+
+![Static Badge](https://img.shields.io/badge/License-CC0-yellow?style=flat-square&logo=creativecommons)
+
 ## License
 
 The contents of these example files are provided under the CC0 "No rights reserved" license in the hopes that they will be useful. See the full [License](LICENSE) for more information
