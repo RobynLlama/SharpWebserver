@@ -1,4 +1,4 @@
-﻿/*
+/*
 Copyright (C) 2025 Robyn (robyn@mamallama.dev)
 
     This program is free software: you can redistribute it and/or modify
@@ -27,7 +27,7 @@ class ListenServer
   public static string Version { get; private set; } = string.Empty;
   public static string LICENSE { get; } = """
   ---------------------------------------------------------------------
-  SharpWebserver  Copyright (C) 2025  Robyn@mamallama.dev
+  SharpWebserver  Copyright (C) 2025  Robyn <Robyn@mamallama.dev>
     This program comes with ABSOLUTELY NO WARRANTY;
     This is free software, and you are welcome to redistribute it
     under certain conditions; See the included license for details.
