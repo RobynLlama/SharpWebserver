@@ -19,6 +19,7 @@ public static partial class Utilities
       sb.AppendLine("Connection: close");
     else
       sb.AppendLine("Connection: keep-alive");
+    sb.AppendLine("Server: SharpServer/" + ListenServer.Version);
     sb.AppendLine(); //Blank line to separate headers from body
 
     //Process header
