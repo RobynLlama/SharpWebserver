@@ -1,3 +1,12 @@
+﻿/*
+Copyright (C) 2025 Robyn (robyn@mamallama.dev)
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+*/
+
 using System.Net;
 using System.Net.Sockets;
 using CSScriptLib;
@@ -14,11 +23,26 @@ class ListenServer
   public static string ConfigDir { get; private set; } = "";
   public static string IncludesDir { get; private set; } = "";
   public static IEvaluator ScriptRunner = CSScript.Evaluator.ReferenceAssembly(typeof(ListenServer).Assembly);
-  public static bool SafeMode { get; private set; } = false;
+  public static bool SafeMode { get; private set; } = true;
   public static string Version { get; private set; } = string.Empty;
+  public static string LICENSE { get; } = """
+  ---------------------------------------------------------------------
+  SharpWebserver  Copyright (C) 2025  Robyn@mamallama.dev
+    This program comes with ABSOLUTELY NO WARRANTY;
+    This is free software, and you are welcome to redistribute it
+    under certain conditions; See the included license for details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program.  If not, see <https://www.gnu.org/licenses/>
+  ---------------------------------------------------------------------
+  
+  """;
 
   static void Main()
   {
+
+    Console.WriteLine(LICENSE);
+
     //Setup connected clients
     List<ConnectedClient> clients = [];
     List<ConnectedClient> reapedClients = [];
@@ -31,7 +55,7 @@ class ListenServer
       return;
     }
 
-    BaseDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "RobynLlama", "SimpleServer");
+    BaseDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "RobynLlama", "SharpWebserver");
     WebRoot = Path.Combine(BaseDir, "www");
     ConfigDir = Path.Combine(BaseDir, "config");
     IncludesDir = Path.Combine(BaseDir, "includes");
