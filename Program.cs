@@ -66,7 +66,7 @@ class ListenServer
 
         if (!Utilities.AllowClient(remote))
         {
-          Logger.LogTrace("Refusing a client due to security policy");
+          Logger.LogWarning("Refusing a client due to security policy");
           var response = Utilities.GenerateResponse(403u, "Client Forbidden", "<h1>Client Forbidden</h1><p>Access denied, your client details have been logged</p>", "text/html");
           client.GetStream().Write(response, 0, response.Length);
           client.Close();
@@ -83,7 +83,7 @@ class ListenServer
         //Check for pending requests
         if (listener.Pending())
         {
-          Logger.LogTrace("Client connected");
+          //Logger.LogTrace("Client connected");
           if (TryAcceptClient(listener.AcceptTcpClient()) is ConnectedClient accepted)
           {
             clients.Add(accepted);

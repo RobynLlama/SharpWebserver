@@ -22,7 +22,7 @@ public class RequestInfo
     string document = "/";
     Uri? host = null;
 
-    Logger.LogTrace("Reading what the client sent");
+    //Logger.LogTrace("Reading what the client sent");
 
     MemoryStream backingStream = new();
     byte[] buffer = new byte[1024];
@@ -41,8 +41,8 @@ public class RequestInfo
       {
         if (retries > 0)
         {
-          Logger.LogTrace("Pausing for client");
-          Thread.Sleep(250);
+          //Logger.LogTrace("Pausing for client");
+          Thread.Sleep(25);
           retries--;
           continue;
         }
@@ -50,7 +50,7 @@ public class RequestInfo
       }
     }
 
-    Logger.LogTrace("Finished reading client info", [("Size", bytesRead)]);
+    //Logger.LogTrace("Finished reading client info", [("Size", bytesRead)]);
     backingStream.Seek(0, SeekOrigin.Begin);
     StreamReader reader = new(backingStream, Encoding.UTF8);
     string? line;
@@ -115,27 +115,27 @@ public class RequestInfo
     if (host is not null)
       Request = new(host, document);
 
-    Logger.LogInfo("Request processed", [
+    /*Logger.LogInfo("Request processed", [
         ("Host", host),
         ("Document", document),
         ("Request", Request),
         ("Post", HasPost)
-    ]);
+    ]);*/
 
     string PostString = string.Empty;
     PostData = new byte[postLength];
 
     if (HasPost && postLength > 0)
     {
-      Logger.LogInfo("Fetching post string");
+      //Logger.LogInfo("Fetching post string");
       backingStream.Seek(bytesRead - postLength, SeekOrigin.Begin);
-      Logger.LogTrace("Reading backing stream into post data", [("Read", backingStream.Read(PostData)), ("Size", postLength)]);
+      //Logger.LogTrace("Reading backing stream into post data", [("Read", backingStream.Read(PostData)), ("Size", postLength)]);
       PostString = Encoding.UTF8.GetString(PostData);
     }
 
-    Logger.LogInfo("Parsing arguments", [(
-      ("PostArgs", PostString)
-    )]);
+    //Logger.LogInfo("Parsing arguments", [(
+    //("PostArgs", PostString)
+    //)]);
 
     foreach (byte value in PostData)
     {

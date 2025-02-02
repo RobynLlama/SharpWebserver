@@ -23,10 +23,10 @@ public class ConnectedClient
     Client = client;
     Remote = remote;
 
-    Logger.LogInfo($"New Client", [
-      ("ID", ClientID),
-      ("Remote", remote)
-    ]);
+    //Logger.LogInfo($"New Client", [
+    //("ID", ClientID),
+    //("Remote", remote)
+    //]);
   }
 
   public void BecomeStale(uint code, string reason, string feedback)
@@ -109,10 +109,10 @@ public class ConnectedClient
       resolvedPath = Path.Combine(resolvedPath, "Index.cs");
     }
 
-    Logger.LogInfo("Finished path resolution", [
-      ("Original", localPath),
-      ("Resolved", resolvedPath)
-    ]);
+    //Logger.LogInfo("Finished path resolution", [
+    //("Original", localPath),
+    //("Resolved", resolvedPath)
+    //]);
 
     FileInfo file = new(resolvedPath);
 

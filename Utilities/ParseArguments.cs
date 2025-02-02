@@ -27,10 +27,10 @@ public static partial class Utilities
       if (temp.Length < 2)
         continue;
 
-      Logger.LogTrace("ArgPair", [
-        ("Key", temp[0]),
-        ("Value", temp[1])
-      ]);
+      //Logger.LogTrace("ArgPair", [
+      //("Key", temp[0]),
+      //("Value", temp[1])
+      //]);
 
       vars[temp[0]] = temp[1];
     }
