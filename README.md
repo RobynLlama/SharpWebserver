@@ -19,7 +19,7 @@ Todo!
 
 ## Using the Interop to Create Webpages
 
-All rendered webpage scripts should adhere to SharpWebserver.Interop.IScriptPage in order to properly compile and run. Your page renderer will be send the connected client information as well as a Dictionary of string argument names and value that represent both the GET address variables and processed POST variables if they were an encoded form.
+All rendered webpage scripts should adhere to SharpWebserver.Interop.IScriptPage in order to properly compile and run. Your page renderer will be sent the connected client information as well as a Dictionary of string argument names and value that represent both the GET address variables and processed POST variables if they were an encoded form.
 
 ### Examples
 
