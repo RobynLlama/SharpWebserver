@@ -4,7 +4,17 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
-    <AssemblyVersion>0.1.0.0</AssemblyVersion>
+    <Product>SharpWebserver</Product>
+    <Authors>Robyn</Authors>
+    <Description>Serves CS files as webpages</Description>
+    <LangVersion>latest</LangVersion>
+    <PublishSingleFile>true</PublishSingleFile>
+    <ProjectDepsFileName>$(Product).deps.json</ProjectDepsFileName>
+    <RootNamespace>$(Product)</RootNamespace>
+    <TargetName>$(Product)</TargetName>
+    <AssemblyName>$(Product)</AssemblyName>
+
+    <Version>0.1.0.1</Version>
   </PropertyGroup>
 
   <ItemGroup>
