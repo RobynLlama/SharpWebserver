@@ -113,7 +113,15 @@ public class RequestInfo
     }
 
     if (host is not null)
-      Request = new(host, document);
+      try
+      {
+        Request = new(host, document);
+      }
+      catch (Exception ex)
+      {
+        Logger.LogError("Error while parsing request", [("Exception", ex)]);
+      }
+
 
     /*Logger.LogInfo("Request processed", [
         ("Host", host),
