@@ -121,6 +121,12 @@ partial class ListenServer
 
       while (true)
       {
+        if (ExitNow)
+        {
+          Logger.LogInfo("Exit requested by user");
+          break;
+        }
+
         //Check for pending requests
         if (listener.Pending())
         {
@@ -162,8 +168,9 @@ partial class ListenServer
       listener.Stop();
     }
 
-    Console.WriteLine("\nHit enter to continue...");
-    Console.Read();
+    //Perform cleanup and eventually save configurations here, etc
+
+    Logger.LogInfo("Goodbye!");
   }
 
 }
