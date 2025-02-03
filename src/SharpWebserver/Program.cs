@@ -1,4 +1,4 @@
-﻿/*
+/*
 Copyright (C) 2025 Robyn (robyn@mamallama.dev)
 
     This program is free software: you can redistribute it and/or modify
@@ -26,7 +26,7 @@ partial class ListenServer
   public static IEvaluator ScriptRunner = CSScript.Evaluator.ReferenceAssembly(typeof(ListenServer).Assembly);
   public static bool SafeMode { get; private set; } = true;
   public static string Version { get; private set; } = string.Empty;
-  public static string LICENSE { get; } = """
+  public static string LICENSE => """
   ---------------------------------------------------------------------
   SharpWebserver  Copyright (C) 2025  Robyn <Robyn@mamallama.dev>
     This program comes with ABSOLUTELY NO WARRANTY;
