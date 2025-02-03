@@ -39,7 +39,7 @@ partial class ListenServer
   
   """;
 
-  static void Main()
+  static void Main(string[] args)
   {
 
     Console.WriteLine(LICENSE);
