@@ -63,8 +63,8 @@ partial class ListenServer
             ]);
             break;
           }
-          Utilities.BanRemote(args[1]);
-          Utilities.SaveBlockList();
+          Utilities.SecurityPolicy.BanRemote(args[1]);
+          Utilities.SecurityPolicy.SaveBlockList();
           break;
         default:
           Logger.LogWarning("Unrecognized input, try `help`");

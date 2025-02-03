@@ -108,7 +108,7 @@ public class ConnectedClient
         ("Remote", Client.Client.RemoteEndPoint)
       ]);
 
-      Utilities.BanRemote(Remote);
+      Utilities.SecurityPolicy.BanRemote(Remote);
       BecomeStale(403u, "Forbidden", "Access to this resource is forbidden. Your client information has been logged");
       return (0u, "", [], "");
     }

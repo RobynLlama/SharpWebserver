@@ -67,7 +67,7 @@ partial class ListenServer
     Utilities.EnsureDirectory(ConfigDir);
     Utilities.EnsureDirectory(IncludesDir);
 
-    Utilities.LoadBlockList();
+    Utilities.SecurityPolicy.LoadBlockList();
 
     Logger.LogInfo("Startup", [
       ("BaseDir", BaseDir),
@@ -107,7 +107,7 @@ partial class ListenServer
           return null;
         }
 
-        if (!Utilities.AllowClient(remote))
+        if (!Utilities.SecurityPolicy.AllowClient(remote))
         {
           Logger.LogWarning("Refusing a client due to security policy");
           var response = Utilities.GenerateResponse(403u, "Client Forbidden", "<h1>Client Forbidden</h1><p>Access denied, your client details have been logged</p>", "text/html");
@@ -174,7 +174,7 @@ partial class ListenServer
     }
 
     //Perform cleanup and eventually save configurations here, etc
-    Utilities.SaveBlockList();
+    Utilities.SecurityPolicy.SaveBlockList();
 
     Logger.LogInfo("Goodbye!");
   }
