@@ -192,7 +192,6 @@ partial class ListenServer
           Console.Write("SharpConfig.json");
           Console.ResetColor();
           Console.WriteLine(" to change the port number.\n");
-          goto EndProgram;
         }
 
       Logger.LogError("Unable to bind ListenServer", [
