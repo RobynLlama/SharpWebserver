@@ -7,84 +7,54 @@ Copyright (C) 2025 Robyn (robyn@mamallama.dev)
     (at your option) any later version.
 */
 
-using System.IO;
 using System.Net;
-using System.Text.Json;
 using SharpWebserver.Config;
 
 namespace SharpWebserver;
 
 public static partial class Utilities
 {
-  private static ClientBlockList blockedClients = new();
-
-  public static void SaveBlockList()
+  public static class SecurityPolicy
   {
-    var path = Path.Combine(ListenServer.ConfigDir, "bannedClients.json");
-    var config = new FileInfo(path);
+    private static ClientBlockList blockedClients = new();
 
-    using (var writer = config.OpenWrite())
+    public static void SaveBlockList()
     {
-      JsonSerializer.Serialize(writer, blockedClients);
-      Logger.LogInfo("Wrote out bannedClients.json");
+      ConfigManager.SaveConfig("bannedClients.json", blockedClients);
     }
-  }
-  public static void LoadBlockList()
-  {
-    var path = Path.Combine(ListenServer.ConfigDir, "bannedClients.json");
-    var config = new FileInfo(path);
-
-    if (config.Exists)
+    public static void LoadBlockList()
     {
-      Logger.LogInfo("Refreshing block list from disk", [
-        ("config-path", path)
+      if (ConfigManager.LoadConfig<ClientBlockList>("bannedClients.json") is ClientBlockList list)
+        blockedClients = list;
+    }
+    public static void BanRemote(string item)
+    {
+      Logger.LogWarning("Enacting security policy on client", [
+        ("Remote", item)
       ]);
 
-      using (var reader = config.OpenText())
-      {
-        string listData = reader.ReadToEnd();
-        var thing = JsonSerializer.Deserialize<ClientBlockList>(listData);
-
-        if (thing is not null)
-        {
-          Logger.LogTrace("Finished loading block list");
-          blockedClients = thing;
-          return;
-        }
-
-        Logger.LogError("Unable to parse data as ClientBlockList", [
-          ("Size", listData.Length)
-        ]);
-      }
+      if (!blockedClients.BlockList.Contains(item))
+        blockedClients.BlockList.Add(item);
     }
-  }
-  public static void BanRemote(string item)
-  {
-    Logger.LogWarning("Enacting security policy on client", [
-      ("Remote", item)
-    ]);
-
-    if (!blockedClients.BlockList.Contains(item))
-      blockedClients.BlockList.Add(item);
-  }
-  public static void BanRemote(EndPoint remote)
-  {
-    string? item = remote.ToString()?.Split(':')[0];
-
-    if (item is not null)
-      BanRemote(item);
-  }
-
-  public static bool AllowClient(EndPoint remote)
-  {
-    string? item = remote.ToString()?.Split(':')[0];
-
-    if (item is not null)
+    public static void BanRemote(EndPoint remote)
     {
-      if (blockedClients.BlockList.Contains(item))
-        return false;
+      string? item = remote.ToString()?.Split(':')[0];
+
+      if (item is not null)
+        BanRemote(item);
     }
 
-    return true;
+    public static bool AllowClient(EndPoint remote)
+    {
+      string? item = remote.ToString()?.Split(':')[0];
+
+      if (item is not null)
+      {
+        if (blockedClients.BlockList.Contains(item))
+          return false;
+      }
+
+      return true;
+    }
   }
 }
