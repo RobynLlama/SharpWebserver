@@ -1,12 +1,7 @@
-using System.Text.Json.Serialization;
-
 namespace SharpWebserver.Config;
 
 public class SharpConfig
 {
-  [JsonInclude]
-  public bool SafeMode;
-  [JsonInclude]
-  public int PortNumber = 80;
-
+  public bool SafeMode { get; set; } = false;
+  public int PortNumber { get; set; } = 80;
 }

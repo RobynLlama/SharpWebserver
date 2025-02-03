@@ -1,11 +1,16 @@
 using System.IO;
-using System.Text.Json;
+using Tomlyn;
 
 namespace SharpWebserver;
 
 public static class ConfigManager
 {
-  public static T? LoadConfig<T>(string fileName) where T : class
+  public static readonly TomlModelOptions Options = new()
+  {
+    ConvertPropertyName = x => x,
+  };
+
+  public static T? LoadConfig<T>(string fileName) where T : class, new()
   {
     var path = Path.Combine(ListenServer.ConfigDir, fileName);
     var config = new FileInfo(path);
@@ -19,18 +24,23 @@ public static class ConfigManager
       using (var reader = config.OpenText())
       {
         string objectData = reader.ReadToEnd();
-        var thing = JsonSerializer.Deserialize<T>(objectData);
 
-        if (thing is not null)
+        try
         {
-          Logger.LogTrace("Finished loading config from disk");
-          return thing;
+          var thing = Toml.ToModel<T>(objectData, options: Options);
+          if (thing is not null)
+          {
+            Logger.LogTrace("Finished loading config from disk");
+            return thing;
+          }
         }
-
-        Logger.LogError("Unable to parse data as generic type T", [
-          ("Size", objectData.Length),
-          ("Type", typeof(T))
-        ]);
+        catch
+        {
+          Logger.LogError("Unable to parse data as generic type T", [
+            ("Size", objectData.Length),
+            ("Type", typeof(T))
+          ]);
+        }
       }
     }
 
@@ -42,9 +52,9 @@ public static class ConfigManager
     var path = Path.Combine(ListenServer.ConfigDir, fileName);
     var configFile = new FileInfo(path);
 
-    using (var writer = configFile.OpenWrite())
+    using (var writer = new StreamWriter(new FileStream(configFile.FullName, FileMode.Truncate)))
     {
-      JsonSerializer.Serialize(writer, configObject);
+      writer.Write(Toml.FromModel(configObject, options: Options));
       Logger.LogInfo($"Wrote out {fileName}");
     }
   }
