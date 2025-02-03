@@ -42,7 +42,7 @@ Use `./SharpServer --help` to display this information in your terminal.
 - `-p`, `--portable`      | Launch in portable mode using the current directory instead of appdata
 - `-l`, `--license`       | output this program's license information and exit
   
-> *Note*
+> [!TIP]
 >
 > The default base directory when not launching in portable mode is `%localAppData%/RobynLlama/SharpWebserver` on windows and `~/.local/share/RobynLlama/SharpWebserver` on most Linux distros. See [Special Folders](https://learn.microsoft.com/en-us/dotnet/api/system.environment.getfolderpath?view=net-8.0) on the MSDN docs for more on where this location is on your system.
 
