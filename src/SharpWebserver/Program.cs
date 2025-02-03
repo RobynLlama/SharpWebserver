@@ -19,10 +19,10 @@ using System.Threading.Tasks;
 namespace SharpWebserver;
 partial class ListenServer
 {
-  public static string BaseDir { get; private set; } = "";
-  public static string WebRoot { get; private set; } = "";
-  public static string ConfigDir { get; private set; } = "";
-  public static string IncludesDir { get; private set; } = "";
+  public static string BaseDir { get; private set; } = string.Empty;
+  public static string WebRoot { get; private set; } = string.Empty;
+  public static string ConfigDir { get; private set; } = string.Empty;
+  public static string IncludesDir { get; private set; } = string.Empty;
   public static IEvaluator ScriptRunner = CSScript.Evaluator.ReferenceAssembly(typeof(ListenServer).Assembly);
   public static bool SafeMode { get; private set; } = true;
   public static string Version { get; private set; } = string.Empty;
