@@ -45,7 +45,7 @@ public static class ConfigManager
     using (var writer = configFile.OpenWrite())
     {
       JsonSerializer.Serialize(writer, configObject);
-      Logger.LogInfo("Wrote out bannedClients.json");
+      Logger.LogInfo($"Wrote out {fileName}");
     }
   }
 }
