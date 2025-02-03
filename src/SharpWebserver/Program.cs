@@ -15,6 +15,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using SharpWebserver.Config;
 
 namespace SharpWebserver;
 partial class ListenServer
@@ -24,8 +25,9 @@ partial class ListenServer
   public static string ConfigDir { get; private set; } = string.Empty;
   public static string IncludesDir { get; private set; } = string.Empty;
   public static readonly IEvaluator ScriptRunner = CSScript.Evaluator.ReferenceAssembly(typeof(ListenServer).Assembly);
-  public static bool SafeMode { get; private set; } = true;
+  public static bool SafeMode => GlobalConfig.SafeMode;
   public static string Version { get; private set; } = string.Empty;
+  private static SharpConfig GlobalConfig = new();
   public static string LICENSE => """
   ---------------------------------------------------------------------
   SharpWebserver  Copyright (C) 2025  Robyn <Robyn@mamallama.dev>
@@ -67,6 +69,12 @@ partial class ListenServer
     Utilities.EnsureDirectory(ConfigDir);
     Utilities.EnsureDirectory(IncludesDir);
 
+    //Load global config
+    if (ConfigManager.LoadConfig<SharpConfig>("SharpConfig.json") is not SharpConfig gc)
+      Logger.LogInfo("Using default global config");
+    else
+      GlobalConfig = gc;
+
     Utilities.SecurityPolicy.LoadBlockList();
 
     Logger.LogInfo("Startup", [
@@ -75,13 +83,9 @@ partial class ListenServer
       ("SafeMode", SafeMode),
     ]);
 
-    // Define the local endpoint for the socket.
-    // For this example, we'll use localhost and port 5000.
-    IPAddress ipAddress = IPAddress.Any; // Use IPAddress.Parse("127.0.0.1") for localhost
-    int port = 8080;
-
-    // Create a TCP listener to accept client connections.
-    TcpListener listener = new(ipAddress, port);
+    //Define the local endpoint for the socket.
+    IPAddress ipAddress = IPAddress.Any;
+    TcpListener listener = new(ipAddress, GlobalConfig.PortNumber);
 
     //Register the input handler
     var InputHandler = Task.Run(HandleInputAsync);
@@ -92,7 +96,7 @@ partial class ListenServer
       listener.Start();
       Logger.LogInfo("Server starting up", [
         ("Bound IP", ipAddress),
-        ("Bound Port", port),
+        ("Bound Port", GlobalConfig.PortNumber),
         ("Status", "Waiting for connections")
       ]);
 
@@ -169,14 +173,18 @@ partial class ListenServer
     }
     finally
     {
-      // Stop listening for new clients.
+      //Stop listening for new clients.
       listener.Stop();
     }
 
+    #region Cleanup
+
     //Perform cleanup and eventually save configurations here, etc
+    ConfigManager.SaveConfig("SharpConfig.json", GlobalConfig);
     Utilities.SecurityPolicy.SaveBlockList();
 
     Logger.LogInfo("Goodbye!");
+    #endregion
   }
 
 }
