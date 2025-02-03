@@ -23,7 +23,7 @@ partial class ListenServer
   public static string WebRoot { get; private set; } = string.Empty;
   public static string ConfigDir { get; private set; } = string.Empty;
   public static string IncludesDir { get; private set; } = string.Empty;
-  public static IEvaluator ScriptRunner = CSScript.Evaluator.ReferenceAssembly(typeof(ListenServer).Assembly);
+  public static readonly IEvaluator ScriptRunner = CSScript.Evaluator.ReferenceAssembly(typeof(ListenServer).Assembly);
   public static bool SafeMode { get; private set; } = true;
   public static string Version { get; private set; } = string.Empty;
   public static string LICENSE => """
