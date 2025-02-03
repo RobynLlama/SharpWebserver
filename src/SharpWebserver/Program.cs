@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using SharpWebserver.Config;
+using System.Runtime.InteropServices;
 
 namespace SharpWebserver;
 partial class ListenServer
@@ -172,6 +173,31 @@ partial class ListenServer
 
       #endregion
 
+    }
+    catch (SocketException ex)
+    {
+      if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) || RuntimeInformation.IsOSPlatform(OSPlatform.FreeBSD))
+        if (GlobalConfig.PortNumber < 1025)
+        {
+          Console.WriteLine();
+          Console.ForegroundColor = ConsoleColor.Red;
+          Console.WriteLine("-FATAL-");
+          Console.ResetColor();
+          Console.Write("  Unable to bind ports up to 1024 on Unix family OSes without superuser escalation.\n  Please run the program again but with ");
+          Console.ForegroundColor = ConsoleColor.Yellow;
+          Console.Write("sudo");
+          Console.ResetColor();
+          Console.Write(" or your distro's equivalent superuser or edit ");
+          Console.ForegroundColor = ConsoleColor.Magenta;
+          Console.Write("SharpConfig.json");
+          Console.ResetColor();
+          Console.WriteLine(" to change the port number.\n");
+          goto EndProgram;
+        }
+
+      Logger.LogError("Unable to bind ListenServer", [
+        ("Stack", ex.StackTrace)
+      ]);
     }
     catch (Exception ex)
     {
