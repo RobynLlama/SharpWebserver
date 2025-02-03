@@ -74,7 +74,7 @@ partial class ListenServer
           break;
         case "config-reload":
           Utilities.SecurityPolicy.LoadBlockList();
-          if (ConfigManager.LoadConfig<SharpConfig>("SharpConfig.json") is not SharpConfig gc)
+          if (ConfigManager.LoadConfig<SharpConfig>("SharpConfig.toml") is not SharpConfig gc)
             Logger.LogWarning("Failed to reload global config");
           else
           {

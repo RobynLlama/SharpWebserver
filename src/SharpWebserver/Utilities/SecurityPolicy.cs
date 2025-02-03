@@ -20,11 +20,11 @@ public static partial class Utilities
 
     public static void SaveBlockList()
     {
-      ConfigManager.SaveConfig("bannedClients.json", blockedClients);
+      ConfigManager.SaveConfig("BannedClients.toml", blockedClients);
     }
     public static void LoadBlockList()
     {
-      if (ConfigManager.LoadConfig<ClientBlockList>("bannedClients.json") is ClientBlockList list)
+      if (ConfigManager.LoadConfig<ClientBlockList>("BannedClients.toml") is ClientBlockList list)
         blockedClients = list;
     }
     public static void BanRemote(string item)

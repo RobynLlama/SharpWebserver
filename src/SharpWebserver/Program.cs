@@ -17,6 +17,7 @@ using System.IO;
 using System.Threading.Tasks;
 using SharpWebserver.Config;
 using System.Runtime.InteropServices;
+using Tomlyn;
 
 namespace SharpWebserver;
 partial class ListenServer
@@ -45,6 +46,16 @@ partial class ListenServer
   static void Main(string[] args)
   {
 
+    /*
+        var GlobalToml = @"SafeMode = true
+        PortNumber = 8080
+        ";
+
+        var BlockToml = @"BlockList = [ 
+          'item', 'item2', 'item3'
+        ]
+        ";
+    */
     ProcessArguments(in args);
 
     if (ExitNow)
@@ -80,7 +91,7 @@ partial class ListenServer
     Utilities.EnsureDirectory(IncludesDir);
 
     //Load global config
-    if (ConfigManager.LoadConfig<SharpConfig>("SharpConfig.json") is not SharpConfig gc)
+    if (ConfigManager.LoadConfig<SharpConfig>("SharpConfig.toml") is not SharpConfig gc)
       Logger.LogInfo("Using default global config");
     else
       GlobalConfig = gc;
@@ -189,7 +200,7 @@ partial class ListenServer
           Console.ResetColor();
           Console.Write(" or your distro's equivalent superuser or edit ");
           Console.ForegroundColor = ConsoleColor.Magenta;
-          Console.Write("SharpConfig.json");
+          Console.Write("SharpConfig.toml");
           Console.ResetColor();
           Console.WriteLine(" to change the port number.\n");
         }
@@ -214,7 +225,7 @@ partial class ListenServer
     #region Cleanup
 
     //Perform cleanup and eventually save configurations here, etc
-    ConfigManager.SaveConfig("SharpConfig.json", GlobalConfig);
+    ConfigManager.SaveConfig("SharpConfig.toml", GlobalConfig);
     Utilities.SecurityPolicy.SaveBlockList();
 
     #endregion
