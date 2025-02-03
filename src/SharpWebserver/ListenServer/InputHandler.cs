@@ -9,6 +9,8 @@ Copyright (C) 2025 Robyn (robyn@mamallama.dev)
 
 using System;
 using System.Threading.Tasks;
+using SharpWebserver.Caching;
+using SharpWebserver.Config;
 
 namespace SharpWebserver;
 
@@ -46,7 +48,7 @@ partial class ListenServer
         case "help":
           Logger.LogInfo("help", [
             ("help", "Show this screen"),
-            ("exit", "Exit immediately"),
+            ("exit", "Exit immediately, saving configs"),
             ("cache-clear", "Clear the page cache (for testing)"),
             ("ban", "Ban a client by IP address"),
             ("config-reload", "Reload the server config file(s)"),
@@ -65,6 +67,20 @@ partial class ListenServer
           }
           Utilities.SecurityPolicy.BanRemote(args[1]);
           Utilities.SecurityPolicy.SaveBlockList();
+          break;
+        case "cache-clear":
+          PageCache.ClearCache();
+          Logger.LogInfo("Cache cleared");
+          break;
+        case "config-reload":
+          Utilities.SecurityPolicy.LoadBlockList();
+          if (ConfigManager.LoadConfig<SharpConfig>("SharpConfig.json") is not SharpConfig gc)
+            Logger.LogWarning("Failed to reload global config");
+          else
+          {
+            GlobalConfig = gc;
+          }
+          Logger.LogInfo("Configs reloaded");
           break;
         default:
           Logger.LogWarning("Unrecognized input, try `help`");
