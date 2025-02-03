@@ -1,4 +1,4 @@
-/*
+﻿/*
 Copyright (C) 2025 Robyn (robyn@mamallama.dev)
 
     This program is free software: you can redistribute it and/or modify
@@ -66,6 +66,8 @@ partial class ListenServer
     Utilities.EnsureDirectory(WebRoot);
     Utilities.EnsureDirectory(ConfigDir);
     Utilities.EnsureDirectory(IncludesDir);
+
+    Utilities.LoadBlockList();
 
     Logger.LogInfo("Startup", [
       ("BaseDir", BaseDir),
@@ -169,6 +171,7 @@ partial class ListenServer
     }
 
     //Perform cleanup and eventually save configurations here, etc
+    Utilities.SaveBlockList();
 
     Logger.LogInfo("Goodbye!");
   }
