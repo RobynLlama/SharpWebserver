@@ -23,12 +23,12 @@ A very simple webserver that serves files from your local app data.
 
 ## Configuration
 
-Global configuration options are stored in `./Config/SharpConfig.json`
+Global configuration options are stored in `./Config/SharpConfig.toml`
 
 - `SafeMode` : If set to true the server will respond with dummy data instead of real webpages. Great for testing the extents of the server without exposing any real info.
 - `PortNumber` : The port the server should bind to. On Unix family OSes ports below 1024 are *protected* and require super user permission to bind. Use `sudo` or choose a higher range port such as 8080.
 
-The remote block list is stored in `bannedClients.json`
+The remote block list is stored in `./Config/BannedClients.toml`
 
 Each entry is simply an IP that is prohibited from connecting to the server.
 
