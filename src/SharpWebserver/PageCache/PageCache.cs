@@ -19,6 +19,7 @@ public static class PageCache
 
   private static readonly Dictionary<string, CachedPage> CachedObjects = [];
 
+  public static void ClearCache() => CachedObjects.Clear();
   public static IScriptPage? FetchPage(FileInfo file)
   {
     if (CachedObjects.TryGetValue(file.FullName, out var cache))
