@@ -44,6 +44,12 @@ partial class ListenServer
   static void Main(string[] args)
   {
 
+    ProcessArguments(in args);
+
+    if (ExitNow)
+      goto EndProgram;
+
+
     Console.WriteLine(LICENSE);
 
     //Setup connected clients
@@ -58,7 +64,10 @@ partial class ListenServer
       return;
     }
 
-    BaseDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "RobynLlama", "SharpWebserver");
+    //Only use the default if none specified
+    if (BaseDir == string.Empty)
+      BaseDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "RobynLlama", "SharpWebserver");
+
     WebRoot = Path.Combine(BaseDir, "www");
     ConfigDir = Path.Combine(BaseDir, "config");
     IncludesDir = Path.Combine(BaseDir, "includes");
@@ -183,8 +192,13 @@ partial class ListenServer
     ConfigManager.SaveConfig("SharpConfig.json", GlobalConfig);
     Utilities.SecurityPolicy.SaveBlockList();
 
-    Logger.LogInfo("Goodbye!");
     #endregion
+
+    Console.WriteLine();
+
+  //Jump here to exit program gracefully
+  EndProgram:
+    Logger.LogInfo("Goodbye!");
   }
 
 }
