@@ -160,9 +160,12 @@ partial class ListenServer
       #endregion
 
     }
-    catch (SocketException e)
+    catch (Exception ex)
     {
-      Console.WriteLine($"SocketException: {e}");
+      Logger.LogError("Exception!", [
+        ("Type", ex.GetType().Name),
+        ("Stack", ex.StackTrace)
+      ]);
     }
     finally
     {
