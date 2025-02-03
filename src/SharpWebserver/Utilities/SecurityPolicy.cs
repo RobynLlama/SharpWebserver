@@ -7,22 +7,15 @@ Copyright (C) 2025 Robyn (robyn@mamallama.dev)
     (at your option) any later version.
 */
 
-using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Text.Json;
-using System.Text.Json.Serialization;
+using SharpWebserver.Config;
 
 namespace SharpWebserver;
 
 public static partial class Utilities
 {
-  private class ClientBlockList
-  {
-    [JsonInclude]
-    public List<string> BlockList = [];
-  }
-
   private static ClientBlockList blockedClients = new();
 
   public static void SaveBlockList()
