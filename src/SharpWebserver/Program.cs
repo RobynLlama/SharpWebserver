@@ -14,9 +14,10 @@ using SharpWebserver.Clients;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace SharpWebserver;
-class ListenServer
+partial class ListenServer
 {
   public static string BaseDir { get; private set; } = "";
   public static string WebRoot { get; private set; } = "";
@@ -79,6 +80,9 @@ class ListenServer
 
     // Create a TCP listener to accept client connections.
     TcpListener listener = new(ipAddress, port);
+
+    //Register the input handler
+    var InputHandler = Task.Run(HandleInputAsync);
 
     try
     {
