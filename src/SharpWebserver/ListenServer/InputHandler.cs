@@ -52,7 +52,15 @@ partial class ListenServer
             ("cache-clear", "Clear the page cache (for testing)"),
             ("ban", "Ban a client by IP address"),
             ("config-reload", "Reload the server config file(s)"),
+            ("references", "Show all reference assemblies in use")
           ]);
+          break;
+        case "references":
+          Logger.LogInfo("Reference Assemblies");
+          foreach (string item in Utilities.ReferenceAssemblies)
+          {
+            Console.WriteLine("  -> " + item);
+          }
           break;
         case "exit":
           ExitNow = true;
