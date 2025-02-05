@@ -10,14 +10,11 @@ Copyright (C) 2025 Robyn (robyn@mamallama.dev)
 using System.Net;
 using System.Net.Sockets;
 using CSScriptLib;
-using SharpWebserver.Clients;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using SharpWebserver.Config;
 using System.Runtime.InteropServices;
-using Tomlyn;
 
 namespace SharpWebserver;
 partial class ListenServer
@@ -46,16 +43,6 @@ partial class ListenServer
   static async Task Main(string[] args)
   {
 
-    /*
-        var GlobalToml = @"SafeMode = true
-        PortNumber = 8080
-        ";
-
-        var BlockToml = @"BlockList = [ 
-          'item', 'item2', 'item3'
-        ]
-        ";
-    */
     ProcessArguments(in args);
 
     if (ExitNow)
@@ -63,9 +50,6 @@ partial class ListenServer
 
 
     Console.WriteLine(LICENSE);
-
-    //Setup connected clients
-    Dictionary<uint, ConnectedClient> clients = [];
 
     var ver = typeof(ListenServer).Assembly.GetName().Version;
 
@@ -106,8 +90,10 @@ partial class ListenServer
     ]);
 
     //Define the local endpoint for the socket.
-    IPAddress ipAddress = IPAddress.Any;
-    TcpListener listener = new(ipAddress, GlobalConfig.PortNumber);
+    HttpListener listener = new();
+
+    //Set valid prefixes
+    listener.Prefixes.Add($"http://127.0.0.1:{GlobalConfig.PortNumber}/");
 
     //Register the input handler
     var InputHandler = Task.Run(HandleInputAsync);
@@ -117,72 +103,35 @@ partial class ListenServer
       // Start listening for client requests.
       listener.Start();
       Logger.LogInfo("Server starting up", [
-        ("Bound IP", ipAddress),
         ("Bound Port", GlobalConfig.PortNumber),
         ("Status", "Waiting for connections")
       ]);
 
-      void TryAcceptClientCallback(IAsyncResult ar)
+      void ContextReceivedCallback(IAsyncResult ar)
       {
-        var client = listener.EndAcceptTcpClient(ar);
+        var context = listener.EndGetContext(ar);
 
-        if (client.Client.RemoteEndPoint is not EndPoint remote || remote.AddressFamily != AddressFamily.InterNetwork)
-        {
-          Logger.LogWarning("Refusing a client with bad or unsupported IP information");
-          var response = Utilities.GenerateResponse(421u, "Misdirected Request", "<h1>Misdirected Request</h1><p>Unable to service your device's IP configuration</p>", "text/html", true);
-          client.GetStream().Write(response, 0, response.Length);
-          client.Close();
-          return;
-        }
+        Logger.LogInfo("New Request", [
+          ("From", context.Request.RemoteEndPoint),
+          ("Document", context.Request.RawUrl),
+          ("Query Count", context.Request.QueryString.Count),
+          ("Has Post Data?", context.Request.HasEntityBody)
+          ]);
 
-        if (!Utilities.SecurityPolicy.AllowClient(remote))
-        {
-          Logger.LogWarning("Refusing a client due to security policy");
-          var response = Utilities.GenerateResponse(403u, "Client Forbidden", "<h1>Client Forbidden</h1><p>Access denied, your client details have been logged</p>", "text/html");
-          client.GetStream().Write(response, 0, response.Length);
-          client.Close();
-          return;
-        }
-
-        var newClient = new ConnectedClient(client, remote);
-        clients.TryAdd(newClient.ClientID, newClient);
+        ServePageToClient(context);
+        listener.BeginGetContext(ContextReceivedCallback, listener);
       }
 
-      listener.BeginAcceptTcpClient(TryAcceptClientCallback, listener);
+      listener.BeginGetContext(ContextReceivedCallback, listener);
 
       #region Main Loop
 
-      while (true)
+      while (listener.IsListening)
       {
-        if (ExitNow)
-        {
-          Logger.LogInfo("Exit requested by user");
-          break;
-        }
-
-        var ClientTasks = new List<Task>();
-
-        //Handle all requests from all clients
-        foreach (var client in clients.Values)
-        {
-          ClientTasks.Add(Task.Run(client.CheckIn).ContinueWith(ClientTaskEnded, client));
-        }
-
         await Task.Delay(10);
       }
+
       #endregion
-
-      void ClientTaskEnded(Task<bool> task, object? state)
-      {
-        if (task.Result || state is not ConnectedClient client)
-          return;
-
-        Logger.LogInfo("Reaping a client", [
-          ("ClientID", client.ClientID)
-        ]);
-
-        clients.Remove(client.ClientID);
-      }
 
     }
     catch (SocketException ex)
