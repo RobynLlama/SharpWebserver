@@ -55,6 +55,7 @@ The server continues to accept input from the terminal or console it was launche
 - `ban` : Used like ban `IPAddress` this will immediately ban the remote associated with that IP address. Existing connections will not be closed but the client will be sent a notice they have been blocked and the connection ended on every subsequent request.
 - `cache-clear` : Clears the existing webpage program cache. Great for testing and iterating on a page live.
 - `config-reload` : Reloads all configs from disk without saving the current config. Be careful, any unsaved information will be lost. The block list is updated on disk after each entry so this is usually safe to use.
+- `references` : Shows all assemblies that have been requested by webpage scripts from the /references/ folder
 
 ## Using the Interop to Create Webpages
 
