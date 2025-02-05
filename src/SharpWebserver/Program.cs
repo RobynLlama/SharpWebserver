@@ -25,7 +25,7 @@ partial class ListenServer
   public static string BaseDir { get; private set; } = string.Empty;
   public static string WebRoot { get; private set; } = string.Empty;
   public static string ConfigDir { get; private set; } = string.Empty;
-  public static string IncludesDir { get; private set; } = string.Empty;
+  public static string ReferenceDir { get; private set; } = string.Empty;
   public static readonly IEvaluator ScriptRunner = CSScript.Evaluator.ReferenceAssembly(typeof(ListenServer).Assembly);
   public static bool SafeMode => GlobalConfig.SafeMode;
   public static string Version { get; private set; } = string.Empty;
@@ -82,13 +82,13 @@ partial class ListenServer
 
     WebRoot = Path.Combine(BaseDir, "www");
     ConfigDir = Path.Combine(BaseDir, "config");
-    IncludesDir = Path.Combine(BaseDir, "includes");
+    ReferenceDir = Path.Combine(BaseDir, "references");
     Version = $"v{ver.Major}.{ver.Minor}";
 
     Utilities.EnsureDirectory(BaseDir);
     Utilities.EnsureDirectory(WebRoot);
     Utilities.EnsureDirectory(ConfigDir);
-    Utilities.EnsureDirectory(IncludesDir);
+    Utilities.EnsureDirectory(ReferenceDir);
 
     //Load global config
     if (ConfigManager.LoadConfig<SharpConfig>("SharpConfig.toml") is not SharpConfig gc)
@@ -97,6 +97,8 @@ partial class ListenServer
       GlobalConfig = gc;
 
     Utilities.SecurityPolicy.LoadBlockList();
+    CSScript.GlobalSettings.AddSearchDir(ReferenceDir);
+    AppDomain.CurrentDomain.AssemblyResolve += Utilities.ResolveAssembly;
 
     Logger.LogInfo("Startup", [
       ("BaseDir", BaseDir),
