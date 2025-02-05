@@ -82,7 +82,7 @@ partial class ListenServer
     WebRoot = Path.Combine(BaseDir, "www");
     ConfigDir = Path.Combine(BaseDir, "config");
     ReferenceDir = Path.Combine(BaseDir, "references");
-    Version = $"v{ver.Major}.{ver.Minor}";
+    Version = $"v{ver.Major}.{ver.Minor}.{ver.Revision}";
 
     Utilities.EnsureDirectory(BaseDir);
     Utilities.EnsureDirectory(WebRoot);
