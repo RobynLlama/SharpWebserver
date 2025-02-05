@@ -43,7 +43,7 @@ partial class ListenServer
   
   """;
 
-  static void Main(string[] args)
+  static async Task Main(string[] args)
   {
 
     /*
@@ -65,8 +65,7 @@ partial class ListenServer
     Console.WriteLine(LICENSE);
 
     //Setup connected clients
-    List<ConnectedClient> clients = [];
-    List<ConnectedClient> reapedClients = [];
+    Dictionary<uint, ConnectedClient> clients = [];
 
     var ver = typeof(ListenServer).Assembly.GetName().Version;
 
@@ -123,15 +122,17 @@ partial class ListenServer
         ("Status", "Waiting for connections")
       ]);
 
-      static ConnectedClient? TryAcceptClient(TcpClient client)
+      void TryAcceptClientCallback(IAsyncResult ar)
       {
+        var client = listener.EndAcceptTcpClient(ar);
+
         if (client.Client.RemoteEndPoint is not EndPoint remote || remote.AddressFamily != AddressFamily.InterNetwork)
         {
           Logger.LogWarning("Refusing a client with bad or unsupported IP information");
           var response = Utilities.GenerateResponse(421u, "Misdirected Request", "<h1>Misdirected Request</h1><p>Unable to service your device's IP configuration</p>", "text/html", true);
           client.GetStream().Write(response, 0, response.Length);
           client.Close();
-          return null;
+          return;
         }
 
         if (!Utilities.SecurityPolicy.AllowClient(remote))
@@ -140,11 +141,14 @@ partial class ListenServer
           var response = Utilities.GenerateResponse(403u, "Client Forbidden", "<h1>Client Forbidden</h1><p>Access denied, your client details have been logged</p>", "text/html");
           client.GetStream().Write(response, 0, response.Length);
           client.Close();
-          return null;
+          return;
         }
 
-        return new(client, remote);
+        var newClient = new ConnectedClient(client, remote);
+        clients.TryAdd(newClient.ClientID, newClient);
       }
+
+      listener.BeginAcceptTcpClient(TryAcceptClientCallback, listener);
 
       #region Main Loop
 
@@ -156,35 +160,29 @@ partial class ListenServer
           break;
         }
 
-        //Check for pending requests
-        if (listener.Pending())
-        {
-          //Logger.LogTrace("Client connected");
-          if (TryAcceptClient(listener.AcceptTcpClient()) is ConnectedClient accepted)
-          {
-            clients.Add(accepted);
-          }
-        }
+        var ClientTasks = new List<Task>();
 
         //Handle all requests from all clients
-        foreach (var client in clients)
+        foreach (var client in clients.Values)
         {
-          if (!client.CheckIn())
-          {
-            reapedClients.Add(client);
-          }
+          ClientTasks.Add(Task.Run(client.CheckIn).ContinueWith(ClientTaskEnded, client));
         }
 
-        foreach (var client in reapedClients)
-        {
-          Console.WriteLine($"Reaping a client: {client.ClientID}");
-          clients.Remove(client);
-        }
-
-        reapedClients.Clear();
+        await Task.Delay(10);
       }
-
       #endregion
+
+      void ClientTaskEnded(Task<bool> task, object? state)
+      {
+        if (task.Result || state is not ConnectedClient client)
+          return;
+
+        Logger.LogInfo("Reaping a client", [
+          ("ClientID", client.ClientID)
+        ]);
+
+        clients.Remove(client.ClientID);
+      }
 
     }
     catch (SocketException ex)
@@ -238,5 +236,4 @@ partial class ListenServer
   EndProgram:
     Logger.LogInfo("Goodbye!");
   }
-
 }
