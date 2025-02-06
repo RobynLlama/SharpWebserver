@@ -27,6 +27,7 @@ Global configuration options are stored in `./Config/SharpConfig.toml`
 
 - `SafeMode` : If set to true the server will respond with dummy data instead of real webpages. Great for testing the extents of the server without exposing any real info.
 - `PortNumber` : The port the server should bind to. On Unix family OSes ports below 1024 are *protected* and require super user permission to bind. Use `sudo` or choose a higher range port such as 8080.
+- `Prefixes` : The prefix(es) this server will respond to. Defaults to the wildcard which will respond to all prefixes. If you change this, expect things to break and don't ask me how to fix it, I don't understand prefixes. See [MSDN: HTTPListener](https://learn.microsoft.com/en-us/dotnet/api/system.net.httplistener?view=net-8.0) for the worst documentation I've ever read on how to not use this feature.
 
 The remote block list is stored in `./Config/BannedClients.toml`
 
