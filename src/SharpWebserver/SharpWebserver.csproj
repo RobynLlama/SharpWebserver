@@ -14,7 +14,7 @@
     <TargetName>$(Product)</TargetName>
     <AssemblyName>$(Product)</AssemblyName>
 
-    <Version>0.2.0.0</Version>
+    <Version>0.3.0.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
