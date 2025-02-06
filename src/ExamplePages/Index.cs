@@ -13,14 +13,18 @@ Notes:
   won't be an issue)
 */
 
-using SharpWebserver.Interop;
-using SharpWebserver.Clients;
+using System.Net;
 using System.Text;
-using System.Collections.Generic;
+using SharpWebserver.Extensions;
+using SharpWebserver.Interop;
 public class Webpage : IScriptPage
 {
-  public byte[] CreatePage(ConnectedClient client, Dictionary<string, string> arguments)
+  public byte[] CreatePage(HttpListenerRequest request)
   {
+
+    var PostArgs = request.GetDecodedFormDataFirstOrDefault();
+    var GetArgs = request.QueryString.GetFirstOrDefaultForAll();
+
     StringBuilder buffer = new();
     buffer.Append("""
     <html>
@@ -33,10 +37,11 @@ public class Webpage : IScriptPage
           This is the home page, generated from Index.cs!
         </p>
     """);
-    buffer.Append($"<p>Your client id is: {client.ClientID} <br />Your remote is {client.Remote}</p>");
-    buffer.Append("<p>Your request sent the following arguments</p>");
+    buffer.Append($"<p>Your client remote is {request.RemoteEndPoint}</p>");
+
+    buffer.Append("<p>Your get request sent the following arguments</p>");
     buffer.AppendLine("<ul>");
-    foreach (var item in arguments)
+    foreach (var item in GetArgs)
     {
       buffer.Append("<li>");
       buffer.Append(item.Key);
@@ -45,6 +50,22 @@ public class Webpage : IScriptPage
       buffer.AppendLine("</li>");
     }
     buffer.AppendLine("</ul>");
+
+    if (PostArgs is not null)
+    {
+      buffer.Append("<p>Your POST request sent the following arguments");
+      buffer.AppendLine("<ul>");
+      foreach (var item in PostArgs)
+      {
+        buffer.Append("<li>");
+        buffer.Append(item.Key);
+        buffer.Append(" : ");
+        buffer.Append(item.Value);
+        buffer.AppendLine("</li>");
+      }
+      buffer.AppendLine("</ul>");
+    }
+
     buffer.Append("""
       </body>
     </html>

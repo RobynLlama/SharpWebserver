@@ -11,16 +11,22 @@ Notes:
   you may copy into your /www/ folder for SharpWebserver
   to compile and serve at runtime (where the namespace
   won't be an issue)
+
+  This page requires you to build ExampleLibrary and place
+  it in your /references/ folder to demo assembly resolution
 */
 
 using System.Net;
 using System.Text;
+using ExampleLibrary;
 using SharpWebserver.Interop;
 
 public class Webpage : IScriptPage
 {
   public byte[] CreatePage(HttpListenerRequest request)
   {
+    var thing = new MyCoolThing(5);
+
     StringBuilder buffer = new();
     buffer.Append("""
     <!DOCTYPE html>
@@ -31,16 +37,12 @@ public class Webpage : IScriptPage
         <title>Simple Form Example</title>
     </head>
     <body>
+    """);
 
-        <h1>Submit Your Name</h1>
+    buffer.Append(thing.AmazingMethod);
 
-        <!-- Form starts here -->
-        <form action="Index.cs" method="post">
-            <label for="name">Enter your name:</label>
-            <input type="text" id="name" name="name" required>
-            <button type="submit">Submit</button>
-        </form>
-
+    buffer.Append(
+    """
     </body>
     </html>
     """);
