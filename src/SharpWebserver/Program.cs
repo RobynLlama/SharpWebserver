@@ -8,7 +8,6 @@ Copyright (C) 2025 Robyn (robyn@mamallama.dev)
 */
 
 using System.Net;
-using System.Net.Sockets;
 using CSScriptLib;
 using System;
 using System.IO;
@@ -93,7 +92,12 @@ partial class ListenServer
     HttpListener listener = new();
 
     //Set valid prefixes
-    listener.Prefixes.Add($"http://127.0.0.1:{GlobalConfig.PortNumber}/");
+    foreach (var item in GlobalConfig.Prefixes)
+    {
+      //Prefixes should look like "http://127.0.0.1"
+      //or "https://www.example.com"
+      listener.Prefixes.Add($"{item}:{GlobalConfig.PortNumber}/");
+    }
 
     //Register the input handler
     var InputHandler = Task.Run(HandleInputAsync);
