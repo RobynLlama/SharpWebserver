@@ -128,6 +128,9 @@ partial class ListenServer
 
       while (listener.IsListening)
       {
+        if (ExitNow)
+          break;
+
         await Task.Delay(10);
       }
 
