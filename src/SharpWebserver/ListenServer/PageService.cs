@@ -125,7 +125,7 @@ public partial class ListenServer
 
       try
       {
-        var data = script.CreatePage();
+        var data = script.CreatePage(context.Request);
         SendPageResponse(response, data, contentType);
         return;
       }
