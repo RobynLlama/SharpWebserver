@@ -137,29 +137,30 @@ partial class ListenServer
       #endregion
 
     }
-    catch (SocketException ex)
+    catch (HttpListenerException ex)
     {
+
+      Logger.LogError("The server encountered an unrecoverable error during operation", [
+        ("Stack", ex)
+      ]);
+
       if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) || RuntimeInformation.IsOSPlatform(OSPlatform.FreeBSD))
         if (GlobalConfig.PortNumber < 1025)
         {
           Console.WriteLine();
           Console.ForegroundColor = ConsoleColor.Red;
-          Console.WriteLine("-FATAL-");
+          Console.WriteLine("-NOTICE-");
           Console.ResetColor();
-          Console.Write("  Unable to bind ports up to 1024 on Unix family OSes without superuser escalation.\n  Please run the program again but with ");
+          Console.Write("  Unable to bind ports up to 1024 on Unix family OSes without superuser escalation.\n  If this error is occurring before the server even starts up fully then please try running the program again but with ");
           Console.ForegroundColor = ConsoleColor.Yellow;
           Console.Write("sudo");
           Console.ResetColor();
-          Console.Write(" or your distro's equivalent superuser or edit ");
+          Console.Write(" or your distro's equivalent superuser\n  or edit ");
           Console.ForegroundColor = ConsoleColor.Magenta;
           Console.Write("SharpConfig.toml");
           Console.ResetColor();
           Console.WriteLine(" to change the port number.\n");
         }
-
-      Logger.LogError("Unable to bind ListenServer", [
-        ("Stack", ex.StackTrace)
-      ]);
     }
     catch (Exception ex)
     {
@@ -167,11 +168,6 @@ partial class ListenServer
         ("Type", ex.GetType().Name),
         ("Stack", ex.StackTrace)
       ]);
-    }
-    finally
-    {
-      //Stop listening for new clients.
-      listener.Stop();
     }
 
     #region Cleanup
