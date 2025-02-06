@@ -7,11 +7,10 @@ Copyright (C) 2025 Robyn (robyn@mamallama.dev)
     (at your option) any later version.
 */
 
-using System.Collections.Generic;
-using SharpWebserver.Clients;
+using System.Net;
 
 namespace SharpWebserver.Interop;
 public interface IScriptPage
 {
-  public byte[] CreatePage(ConnectedClient client, Dictionary<string, string> arguments);
+  public byte[] CreatePage(HttpListenerRequest request);
 }
