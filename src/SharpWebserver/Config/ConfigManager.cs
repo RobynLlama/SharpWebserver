@@ -52,7 +52,7 @@ public static class ConfigManager
     var path = Path.Combine(ListenServer.ConfigDir, fileName);
     var configFile = new FileInfo(path);
 
-    using (var writer = new StreamWriter(new FileStream(configFile.FullName, FileMode.Truncate)))
+    using (var writer = new StreamWriter(new FileStream(configFile.FullName, FileMode.Create)))
     {
       writer.Write(Toml.FromModel(configObject, options: Options));
       Logger.LogInfo($"Wrote out {fileName}");
