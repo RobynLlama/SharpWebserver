@@ -8,7 +8,7 @@
     <Authors>Robyn</Authors>
     <Description>Serves CS files as webpages</Description>
     <LangVersion>latest</LangVersion>
-    <PublishSingleFile>true</PublishSingleFile>
+    <PublishSingleFile>false</PublishSingleFile>
     <ProjectDepsFileName>$(Product).deps.json</ProjectDepsFileName>
     <RootNamespace>$(Product)</RootNamespace>
     <TargetName>$(Product)</TargetName>
