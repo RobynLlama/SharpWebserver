@@ -60,7 +60,7 @@ The server continues to accept input from the terminal or console it was launche
 
 ## Using the Interop to Create Webpages
 
-All rendered webpage scripts should adhere to SharpWebserver.Interop.IScriptPage in order to properly compile and run. Your page renderer will be sent the connected client information as well as a Dictionary of string argument names and value that represent both the GET address variables and processed POST variables if they were an encoded form.
+All rendered webpage scripts should adhere to [SharpWebserver.Interop.IScriptPage](https://github.com/RobynLlama/SharpWebserver/blob/main/src/SharpWebserver/Interop/IScriptPage.cs) in order to properly compile and run. Your page renderer will be sent the request information and there are extension methods to retrieve the GET variables and processed POST variables if they were sent as an encoded form.
 
 ### Examples
 
